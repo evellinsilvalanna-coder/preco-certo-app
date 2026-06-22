@@ -1,0 +1,16 @@
+{
+  "name": "Preço Certo | Gestão Profissional",
+  "short_name": "Preço Certo",
+  "description": "Calculadora profissional de custos e precificação.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "keywords": "preco, certo, confeitaria, custos",
+  "background_color": "#ffffff",
+  "theme_color": "#E53935",
+  "icons": [
+    { "src": "assets/icons/icon-192x192.png", "type": "image/png", "sizes": "192x192", "purpose": "any" },
+    { "src"": "assets/icons/icon-512x512.png", "type": "image/png", "sizes": "512x512", "purpose": "any" },
+    { "src"": "assets/icons/icon-512x512.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
+  ]
+}
