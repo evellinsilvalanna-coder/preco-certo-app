@@ -1,1 +1,8 @@
-{"name": "preco-certo-app", "version": "1.2.0", "private": true}
+{
+  "name": "preco-certo-app",
+  "version": "1.2.0",
+  "private": true,
+  "scripts": {
+    "build": "mkdir -p out && cp -r * out/ || true"
+  }
+}
