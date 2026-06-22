@@ -112,16 +112,18 @@ function toggleAuthMode() {
 // --- UI & NAVIGATION ---
 let currentView = 'dashboard';
 
+
 function showView(viewId) {
     document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
-    document.getElementById(`view-${viewId}`).classList.remove('hidden');
+    const targetView = document.getElementById('view-' + viewId);
+    if (targetView) targetView.classList.remove('hidden');
     
-    // Nav buttons update
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('text-primary');
         btn.classList.add('text-gray-400');
     });
-    const activeBtn = document.getElementById(`nav-${viewId}`) || document.querySelector(`#nav-${viewId}-btn`);
+    
+    const activeBtn = document.getElementById('nav-' + viewId) || document.querySelector('#nav-' + viewId + '-btn');
     if (activeBtn) {
         activeBtn.classList.add('text-primary');
         activeBtn.classList.remove('text-gray-400');
@@ -215,18 +217,8 @@ function updateDashboard() {
             fcList.innerHTML = '<p class="text-[10px] text-gray-400 italic">Nenhum custo fixo.</p>';
         }
     }
-}
-</span>
-                    <span class="font-bold">${formatCurrency(fc.value)}</span>
-                </div>
-            `;
-        });
-        if(settings.fixedCosts.length === 0) {
-            fcList.innerHTML = '<p class="text-[10px] text-gray-400 italic">Nenhum custo fixo.</p>';
-        }
-    }
-}
 
+}
 
 function renderSalesChart(recipes) {
     const ctx = document.getElementById('salesChart').getContext('2d');
