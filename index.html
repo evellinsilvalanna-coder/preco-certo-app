@@ -97,42 +97,91 @@
         <!-- Main Views -->
         <main class="max-w-7xl mx-auto px-4 py-6">
             
+            
             <!-- Dashboard View -->
             <section id="view-dashboard" class="view space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white dark:bg-zinc-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-700">
-                        <p class="text-gray-500 text-sm">Total de Receitas</p>
-                        <h3 class="text-2xl font-bold mt-1" id="stat-recipes">0</h3>
+                <!-- Greeting & Summary Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-zinc-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-700">
+                        <p class="text-gray-400 text-[10px] uppercase font-bold">Receitas</p>
+                        <h3 class="text-xl font-bold mt-1" id="stat-recipes">0</h3>
                     </div>
-                    <div class="bg-white dark:bg-zinc-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-700">
-                        <p class="text-gray-500 text-sm">Ingredientes</p>
-                        <h3 class="text-2xl font-bold mt-1" id="stat-ingredients">0</h3>
+                    <div class="bg-white dark:bg-zinc-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-700">
+                        <p class="text-gray-400 text-[10px] uppercase font-bold">Insumos</p>
+                        <h3 class="text-xl font-bold mt-1" id="stat-ingredients">0</h3>
                     </div>
-                    <div class="bg-white dark:bg-zinc-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-700">
-                        <p class="text-gray-500 text-sm">Lucro Estimado</p>
-                        <h3 class="text-2xl font-bold mt-1 text-green-500" id="stat-profit">R$ 0,00</h3>
+                    <div class="bg-white dark:bg-zinc-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-700 col-span-2 md:col-span-1">
+                        <p class="text-gray-400 text-[10px] uppercase font-bold">Lucro Estimado</p>
+                        <h3 class="text-xl font-bold mt-1 text-green-500" id="stat-profit">R$ 0,00</h3>
                     </div>
-                    <div class="bg-white dark:bg-zinc-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-700">
-                        <p class="text-gray-500 text-sm">Meta de Vendas</p>
-                        <div class="w-full bg-gray-200 dark:bg-zinc-700 h-2 rounded-full mt-3 overflow-hidden">
-                            <div id="stat-goal-progress" class="bg-primary h-full" style="width: 45%"></div>
+                    <div class="bg-white dark:bg-zinc-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-700 col-span-2 md:col-span-1">
+                        <p class="text-gray-400 text-[10px] uppercase font-bold">Meta Mensal</p>
+                        <div class="w-full bg-gray-100 dark:bg-zinc-700 h-1.5 rounded-full mt-3 overflow-hidden">
+                            <div id="stat-sales-progress" class="bg-primary h-full w-0 transition-all duration-1000"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 bg-white dark:bg-zinc-800 p-6 rounded-2xl shadow-sm">
-                        <h3 class="font-bold mb-4">Desempenho de Vendas</h3>
-                        <canvas id="salesChart" height="200"></canvas>
-                    </div>
-                    <div class="bg-white dark:bg-zinc-800 p-6 rounded-2xl shadow-sm">
-                        <h3 class="font-bold mb-4">Produtos Mais Lucrativos</h3>
-                        <div id="top-products" class="space-y-4">
+                <!-- Action Shortcuts (Dashboard Responsivo) -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button onclick="openModal('recipe')" class="flex flex-col items-center justify-center p-6 bg-primary/10 rounded-3xl border border-primary/20 transition-transform active:scale-95">
+                        <div class="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center text-xl shadow-lg mb-3">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <span class="text-sm font-bold text-primary">Nova Receita</span>
+                    </button>
+                    <button onclick="openModal('ingredient')" class="flex flex-col items-center justify-center p-6 bg-accent/10 rounded-3xl border border-accent/20 transition-transform active:scale-95">
+                        <div class="w-12 h-12 bg-accent text-white rounded-2xl flex items-center justify-center text-xl shadow-lg mb-3">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <span class="text-sm font-bold text-accent">Novo Insumo</span>
+                    </button>
+                    <button onclick="showView('recipes')" class="flex flex-col items-center justify-center p-6 bg-zinc-100 dark:bg-zinc-800 rounded-3xl border border-gray-200 dark:border-zinc-700 transition-transform active:scale-95">
+                        <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 rounded-2xl flex items-center justify-center text-xl mb-3">
+                            <i class="fas fa-list-ul"></i>
+                        </div>
+                        <span class="text-sm font-bold">Minhas Receitas</span>
+                    </button>
+                    <button onclick="showView('settings')" class="flex flex-col items-center justify-center p-6 bg-zinc-100 dark:bg-zinc-800 rounded-3xl border border-gray-200 dark:border-zinc-700 transition-transform active:scale-95">
+                        <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 rounded-2xl flex items-center justify-center text-xl mb-3">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <span class="text-sm font-bold">Configurações</span>
+                    </button>
+                </div>
+
+                <!-- Information Section (Instead of Chart) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-zinc-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-zinc-700">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold"><i class="fas fa-building mr-2 text-primary"></i>Custos Fixos</h3>
+                            <button onclick="addFixedCostPrompt()" class="text-[10px] bg-primary/10 text-primary px-3 py-1 rounded-full font-bold">Gerenciar</button>
+                        </div>
+                        <div id="fixed-costs-list" class="space-y-2 mb-4">
                             <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-zinc-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-zinc-700">
+                        <h3 class="font-bold mb-4"><i class="fas fa-clock mr-2 text-primary"></i>Valor da Sua Hora</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-gray-50 dark:bg-zinc-900 p-3 rounded-2xl">
+                                <label class="text-[10px] text-gray-400 block uppercase font-bold">Salário (R$)</label>
+                                <input type="number" id="cfg-salary" value="3000" onchange="updateLaborRate()" class="w-full bg-transparent font-bold text-lg outline-none">
+                            </div>
+                            <div class="bg-gray-50 dark:bg-zinc-900 p-3 rounded-2xl">
+                                <label class="text-[10px] text-gray-400 block uppercase font-bold">Horas/Mês</label>
+                                <input type="number" id="cfg-hours-month" value="160" onchange="updateLaborRate()" class="w-full bg-transparent font-bold text-lg outline-none">
+                            </div>
+                        </div>
+                        <div class="mt-4 p-4 bg-primary/5 rounded-2xl flex justify-between items-center border border-primary/10">
+                            <span class="text-sm font-medium">Sua hora vale:</span>
+                            <span class="text-lg font-bold text-primary" id="display-labor-rate">R$ 18,75</span>
                         </div>
                     </div>
                 </div>
             </section>
+
 
             <!-- Ingredients View -->
             <section id="view-ingredients" class="view hidden space-y-6">
