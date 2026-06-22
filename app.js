@@ -27,7 +27,7 @@ const Store = {
         return this.db[userId].settings;
     },
     load() {
-        const saved = localStorage.getItem('precocerto_db');
+        const saved = localStorage.getItem('preco_certo_v2_db');
         if (saved) {
             try {
                 this.db = JSON.parse(saved);
@@ -35,20 +35,23 @@ const Store = {
                 console.error("Erro ao carregar banco de dados", e);
             }
         }
-        if (!this.db.users || this.db.users.length === 0) {
-            this.db.users = [{
+        // Initialize admin if not exists
+        if (!this.db.users.find(u => u.email === 'admin@precocerto.com')) {
+            this.db.users.push({
                 id: 'admin',
                 name: 'Administrador',
-                email: 'admin@admin.com',
-                password: 'admin',
+                email: 'admin@precocerto.com',
+                password: 'admin1234',
                 role: 'admin',
-                status: 'active'
-            }];
+                status: 'active',
+                createdAt: new Date().toISOString()
+            });
+            this.save();
         }
         if (!this.db.tutorialCompleted) this.db.tutorialCompleted = {};
     },
     save() {
-        localStorage.setItem('precocerto_db', JSON.stringify(this.db));
+        localStorage.setItem('preco_certo_v2_db', JSON.stringify(this.db));
     }
 };
 
