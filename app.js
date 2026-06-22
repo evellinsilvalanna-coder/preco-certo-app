@@ -164,6 +164,7 @@ function initApp() {
 
 // --- DASHBOARD ---
 
+
 function updateDashboard() {
     const recipes = Store.getUserData('recipes');
     const ingredients = Store.getUserData('ingredients');
@@ -178,6 +179,26 @@ function updateDashboard() {
     const totalProfit = recipes.reduce((sum, r) => sum + (r.profitValue * r.yield || 0), 0);
     if(profitStat) profitStat.innerText = formatCurrency(totalProfit);
 
+    // Recent Recipes List
+    const recentList = document.getElementById('recent-recipes-list');
+    if (recentList) {
+        recentList.innerHTML = '';
+        const recent = [...recipes].reverse().slice(0, 5); // Last 5
+        recent.forEach(r => {
+            recentList.innerHTML += `
+                <tr class="text-xs">
+                    <td class="py-3 font-bold">${r.name}</td>
+                    <td class="py-3 text-gray-500">${formatCurrency(r.totalCost / r.yield)}</td>
+                    <td class="py-3 text-primary font-bold">${formatCurrency(r.suggestedPrice)}</td>
+                    <td class="py-3 text-right text-green-500 font-bold">${formatCurrency(r.profitValue)}</td>
+                </tr>
+            `;
+        });
+        if (recipes.length === 0) {
+            recentList.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-gray-400 italic">Nenhuma receita recente.</td></tr>';
+        }
+    }
+
     const settings = Store.getSettings();
     const fcList = document.getElementById('fixed-costs-list');
     if(fcList) {
@@ -186,6 +207,16 @@ function updateDashboard() {
             fcList.innerHTML += `
                 <div class="flex justify-between text-xs border-b border-gray-50 dark:border-zinc-700 pb-1">
                     <span class="text-gray-400">${fc.name}</span>
+                    <span class="font-bold">${formatCurrency(fc.value)}</span>
+                </div>
+            `;
+        });
+        if(settings.fixedCosts.length === 0) {
+            fcList.innerHTML = '<p class="text-[10px] text-gray-400 italic">Nenhum custo fixo.</p>';
+        }
+    }
+}
+</span>
                     <span class="font-bold">${formatCurrency(fc.value)}</span>
                 </div>
             `;
