@@ -812,31 +812,6 @@ function toggleUserMenu() {
     document.getElementById('user-menu').classList.toggle('hidden');
 }
 
-// --- PWA INSTALL ---
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    document.getElementById('install-container').classList.remove('hidden');
-});
-
-document.getElementById('install-btn').addEventListener('click', async () => {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-            document.getElementById('install-container').classList.add('hidden');
-        }
-        deferredPrompt = null;
-    }
-});
-
-// START
-).catch(err => {
-            console.log('Erro ao registrar SW:', err);
-        });
-    });
-}
 
 // --- PWA INSTALLATION ---
 let deferredPrompt;
@@ -850,25 +825,24 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 });
 
-const installBtn = document.getElementById('install-btn');
-if (installBtn) {
-    installBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                document.getElementById('install-container')?.classList.add('hidden');
-            }
-            deferredPrompt = null;
+document.getElementById('install-btn')?.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            document.getElementById('install-container')?.classList.add('hidden');
         }
-    });
-}
+        deferredPrompt = null;
+    }
+});
 
+// Service Worker Registration
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(console.error);
     });
 }
 
+// Global initialization
 Store.load();
 initApp();
