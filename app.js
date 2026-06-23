@@ -139,6 +139,51 @@ function showView(viewId) {
     window.scrollTo(0, 0);
 }
 
+
+function updateUserExpiration(userId, days) {
+    const index = Store.db.users.findIndex(u => u.id === userId);
+    if (index === -1) return;
+    if (days === 'lifetime') {
+        Store.db.users[index].expiresAt = null;
+    } else {
+        const date = new Date();
+        date.setDate(date.getDate() + parseInt(days));
+        Store.db.users[index].expiresAt = date.toISOString();
+    }
+    Store.save();
+    renderAdminPanel();
+    showToast('Validade atualizada!');
+}
+
+function openFeedbackModal() {
+    console.log('Abrindo modal de feedback');
+    const overlay = document.getElementById('modal-overlay');
+    const feedbackModal = document.getElementById('modal-feedback');
+    if (overlay && feedbackModal) {
+        overlay.classList.remove('hidden');
+        document.querySelectorAll('.modal-box').forEach(m => m.classList.add('hidden'));
+        feedbackModal.classList.remove('hidden');
+    } else {
+        console.error('Elementos do modal não encontrados');
+    }
+}
+
+async function sendFeedback(errorData = null) {
+    const type = errorData ? 'error' : document.getElementById('fb-type').value;
+    const msg = errorData ? `ERRO: ${errorData.message}` : (document.getElementById('fb-message')?.value || '');
+    if(!msg && !errorData) return showToast('Descreva o problema ou sugestão.', 'error');
+    const user = Store.db.currentUser;
+    console.log("Feedback enviado:", { app: "Preço Certo", user: user ? user.email : "Visitante", type, msg });
+    showToast('Feedback enviado com sucesso!');
+    closeModal();
+    if(document.getElementById('fb-message')) document.getElementById('fb-message').value = '';
+}
+
+window.onerror = function(message, url, line, col, error) {
+    sendFeedback({ message, url, line, col, stack: error ? error.stack : 'N/A' });
+    return false;
+};
+
 function initApp() {
     if (!Store.db.currentUser) {
         document.getElementById('auth-screen').classList.remove('hidden');
@@ -872,64 +917,5 @@ if ('serviceWorker' in navigator) {
 }
 
 // Global initialization
-
-function updateUserExpiration(userId, days) {
-    const index = Store.db.users.findIndex(u => u.id === userId);
-    if (index === -1) return;
-    
-    if (days === 'lifetime') {
-        Store.db.users[index].expiresAt = null;
-    } else {
-        const date = new Date();
-        date.setDate(date.getDate() + parseInt(days));
-        Store.db.users[index].expiresAt = date.toISOString();
-    }
-    Store.save();
-    renderAdminPanel();
-    showToast('Validade atualizada!');
-}
-
-function openFeedbackModal() {
-    document.getElementById('modal-overlay').classList.remove('hidden');
-    document.querySelectorAll('.modal-box').forEach(m => m.classList.add('hidden'));
-    document.getElementById('modal-feedback').classList.remove('hidden');
-}
-
-async function sendFeedback(errorData = null) {
-    const type = errorData ? 'error' : document.getElementById('fb-type').value;
-    const msg = errorData ? `ERRO: ${errorData.message}` : (document.getElementById('fb-message')?.value || '');
-    
-    if(!msg && !errorData) return showToast('Descreva o problema ou sugestão.', 'error');
-
-    const user = Store.db.currentUser;
-    const feedbackInfo = {
-        app: "Preço Certo",
-        user: user ? `${user.name} (${user.email})` : "Visitante",
-        type: type,
-        page: currentView,
-        message: msg,
-        errorDetails: errorData ? JSON.stringify(errorData) : null
-    };
-
-    console.log("Feedback enviado:", feedbackInfo);
-    
-    // Simulação de envio via SMTP/API
-    // Em um PWA real, você conectaria aqui a um serviço como EmailJS ou Formspree.
-    showToast('Feedback enviado com sucesso para evellin.silva.lanna@gmail.com!');
-    closeModal();
-    if(document.getElementById('fb-message')) document.getElementById('fb-message').value = '';
-}
-
-window.onerror = function(message, url, line, col, error) {
-    sendFeedback({
-        message: message,
-        url: url,
-        line: line,
-        col: col,
-        stack: error ? error.stack : 'N/A'
-    });
-    return false;
-};
-
 Store.load();
 initApp();
