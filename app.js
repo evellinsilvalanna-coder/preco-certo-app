@@ -139,51 +139,6 @@ function showView(viewId) {
     window.scrollTo(0, 0);
 }
 
-
-function updateUserExpiration(userId, days) {
-    const index = Store.db.users.findIndex(u => u.id === userId);
-    if (index === -1) return;
-    if (days === 'lifetime') {
-        Store.db.users[index].expiresAt = null;
-    } else {
-        const date = new Date();
-        date.setDate(date.getDate() + parseInt(days));
-        Store.db.users[index].expiresAt = date.toISOString();
-    }
-    Store.save();
-    renderAdminPanel();
-    showToast('Validade atualizada!');
-}
-
-function openFeedbackModal() {
-    console.log('Abrindo modal de feedback');
-    const overlay = document.getElementById('modal-overlay');
-    const feedbackModal = document.getElementById('modal-feedback');
-    if (overlay && feedbackModal) {
-        overlay.classList.remove('hidden');
-        document.querySelectorAll('.modal-box').forEach(m => m.classList.add('hidden'));
-        feedbackModal.classList.remove('hidden');
-    } else {
-        console.error('Elementos do modal não encontrados');
-    }
-}
-
-async function sendFeedback(errorData = null) {
-    const type = errorData ? 'error' : document.getElementById('fb-type').value;
-    const msg = errorData ? `ERRO: ${errorData.message}` : (document.getElementById('fb-message')?.value || '');
-    if(!msg && !errorData) return showToast('Descreva o problema ou sugestão.', 'error');
-    const user = Store.db.currentUser;
-    console.log("Feedback enviado:", { app: "Preço Certo", user: user ? user.email : "Visitante", type, msg });
-    showToast('Feedback enviado com sucesso!');
-    closeModal();
-    if(document.getElementById('fb-message')) document.getElementById('fb-message').value = '';
-}
-
-window.onerror = function(message, url, line, col, error) {
-    sendFeedback({ message, url, line, col, stack: error ? error.stack : 'N/A' });
-    return false;
-};
-
 function initApp() {
     if (!Store.db.currentUser) {
         document.getElementById('auth-screen').classList.remove('hidden');
@@ -213,8 +168,8 @@ function initApp() {
 
 
 function updateDashboard() {
-    const recipes = Store.getUserData('recipes').filter(r => r.name.toLowerCase().includes(search));
-    const ingredients = Store.getUserData('ingredients').filter(i => i.name.toLowerCase().includes(search) || (i.brand && i.brand.toLowerCase().includes(search)));
+    const recipes = Store.getUserData('recipes');
+    const ingredients = Store.getUserData('ingredients');
     
     const recipeStat = document.getElementById('stat-recipes');
     const ingredientStat = document.getElementById('stat-ingredients');
@@ -322,8 +277,7 @@ function renderTopProducts(recipes) {
 
 // --- INGREDIENTS ---
 function renderIngredientsTable() {
-    const search = (document.getElementById('search-ingredients')?.value || '').toLowerCase();
-    const ingredients = Store.getUserData('ingredients').filter(i => i.name.toLowerCase().includes(search) || (i.brand && i.brand.toLowerCase().includes(search)));
+    const ingredients = Store.getUserData('ingredients');
     const tbody = document.getElementById('ingredients-table-body');
     tbody.innerHTML = '';
 
@@ -373,7 +327,7 @@ function saveIngredient() {
     let baseUnit = unit;
     let costPerBaseUnit = price / qty;
 
-    const ingredients = Store.getUserData('ingredients').filter(i => i.name.toLowerCase().includes(search) || (i.brand && i.brand.toLowerCase().includes(search)));
+    const ingredients = Store.getUserData('ingredients');
     const newIng = { name, brand, supplier, qty, unit, price, baseUnit, costPerBaseUnit, updatedAt: new Date().toISOString() };
 
     if (id) {
@@ -537,7 +491,7 @@ function saveRecipe() {
     const minsInput = parseFloat(document.getElementById('recipe-time-minutes').value) || 0;
     const prepTime = (hoursInput * 60) + minsInput;
 
-    const recipes = Store.getUserData('recipes').filter(r => r.name.toLowerCase().includes(search));
+    const recipes = Store.getUserData('recipes');
     const newRecipe = {
         title,
         ingredients: ingredientsUsed,
@@ -567,8 +521,7 @@ function saveRecipe() {
 }
 
 function renderRecipesGrid() {
-    const search = (document.getElementById('search-recipes')?.value || '').toLowerCase();
-    const recipes = Store.getUserData('recipes').filter(r => r.name.toLowerCase().includes(search));
+    const recipes = Store.getUserData('recipes');
     const grid = document.getElementById('recipes-grid');
     grid.innerHTML = '';
 
@@ -720,7 +673,7 @@ function adminAction(userId, action) {
 async function generateFullReport() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    const recipes = Store.getUserData('recipes').filter(r => r.name.toLowerCase().includes(search));
+    const recipes = Store.getUserData('recipes');
     
     doc.setFontSize(20);
     doc.text('Relatório Preço Certo', 15, 20);
@@ -745,8 +698,8 @@ async function generateFullReport() {
 }
 
 function exportToExcel() {
-    const recipes = Store.getUserData('recipes').filter(r => r.name.toLowerCase().includes(search));
-    const ingredients = Store.getUserData('ingredients').filter(i => i.name.toLowerCase().includes(search) || (i.brand && i.brand.toLowerCase().includes(search)));
+    const recipes = Store.getUserData('recipes');
+    const ingredients = Store.getUserData('ingredients');
     
     const wb = XLSX.utils.book_new();
     
